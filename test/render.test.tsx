@@ -67,7 +67,7 @@ test("buildHref menangani dynamic, catch-all, query, dan root", () => {
   expect(buildHref("/", {}, { month: "2026-11", flag: true, skip: undefined })).toBe(
     "/?month=2026-11&flag=true",
   );
-  expect(() => buildHref("/users/[id]", {})).toThrow("param `id`");
+  expect(() => buildHref("/users/[id]", {})).toThrow("param `id` not provided for Link");
 });
 
 test("useParams/useLoaderData di luar render route → error jelas", () => {
@@ -75,7 +75,7 @@ test("useParams/useLoaderData di luar render route → error jelas", () => {
     useParams();
     return null;
   }
-  expect(() => renderToString(<Stray />)).toThrow("useParams");
+  expect(() => renderToString(<Stray />)).toThrow("`useParams` called outside a route render");
 });
 
 test("useRouteError mengembalikan error dari provider (default undefined)", () => {
@@ -133,7 +133,7 @@ test("useSearchParams di luar render route → error jelas", () => {
     useSearchParams();
     return null;
   }
-  expect(() => renderToString(<StrayQuery />)).toThrow("useSearchParams");
+  expect(() => renderToString(<StrayQuery />)).toThrow("`useSearchParams` called outside a route render");
 });
 
 test("Link mendukung prop search (Addendum A.3)", () => {

@@ -90,7 +90,7 @@ export function buildHref(
               const name = segment.slice(4, -1);
               const value = params[name];
               if (value === undefined) {
-                throw new Error(`[moons] param \`${name}\` tidak diberikan untuk Link to="${to}"`);
+                throw new Error(`[moons] param \`${name}\` not provided for Link to="${to}"`);
               }
               return value.split("/").map(encodeURIComponent).join("/");
             }
@@ -98,7 +98,7 @@ export function buildHref(
               const name = segment.slice(1, -1);
               const value = params[name];
               if (value === undefined) {
-                throw new Error(`[moons] param \`${name}\` tidak diberikan untuk Link to="${to}"`);
+                throw new Error(`[moons] param \`${name}\` not provided for Link to="${to}"`);
               }
               return encodeURIComponent(value);
             }

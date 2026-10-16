@@ -46,7 +46,7 @@ export function RouteErrorProvider(props: { error: unknown; children?: ReactNode
 export function useParams<P extends string = string>(): ParamsFor<P> {
   const params = useContext(ParamsContext);
   if (params === null) {
-    throw new Error("[moons] `useParams` dipanggil di luar render route");
+    throw new Error("[moons] `useParams` called outside a route render");
   }
   return params as ParamsFor<P>;
 }
@@ -55,7 +55,7 @@ export function useParams<P extends string = string>(): ParamsFor<P> {
 export function useSearchParams(): Record<string, string> {
   const searchParams = useContext(SearchParamsContext);
   if (searchParams === null) {
-    throw new Error("[moons] `useSearchParams` dipanggil di luar render route");
+    throw new Error("[moons] `useSearchParams` called outside a route render");
   }
   return searchParams;
 }
@@ -64,7 +64,7 @@ export function useSearchParams(): Record<string, string> {
 export function useLoaderData<T extends (...args: any) => any>(): Awaited<ReturnType<T>> {
   const context = useContext(LoaderDataContext);
   if (context === null) {
-    throw new Error("[moons] `useLoaderData` dipanggil di luar render route");
+    throw new Error("[moons] `useLoaderData` called outside a route render");
   }
   return context.value as Awaited<ReturnType<T>>;
 }

@@ -22,7 +22,7 @@
     },
   },
   "packages": {
-    "@moonsjs/core": ["@moonsjs/core@0.1.5", "", { "dependencies": { "devalue": "^6.0.3" } }, "sha512-HW8hpXmPtrSqSeTYX9UbeG+mthQRxDWrqnfUI0yrH4BduEgOGzgrpfogmN1EoKUG6SAso3fjNeIS7tedRpIpXA=="],
+    "@moonsjs/core": ["@moonsjs/core@0.1.14", "", { "dependencies": { "devalue": "^6.0.3" } }, "sha512-Q/X8DzzUAPG6CszDM04Sq+2mH2EHQm0Ubq1b1v44iMltCmSvN2cjriACbvjOgsRxETYl8YfI/VklleVQFEmOdA=="],
 
     "@types/bun": ["@types/bun@1.4.3", "", { "dependencies": { "bun-types": "1.4.3" } }, "sha512-N67Pqy8JXbAY/j0tNraS3V5mubGvc6rrrNDmDCtZLlFzccbUJPDb0tvgUBC5q4m8ybkP93Jcn1QB+RYQ6PvBhw=="],
 

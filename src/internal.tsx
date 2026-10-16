@@ -30,7 +30,7 @@ export function renderTree(
     const file = entry.layouts[index] as string;
     const layout = modules.layouts[index];
     if (layout === undefined) {
-      throw new Error(`[moons] modul layout \`${file}\` tidak dimuat`);
+      throw new Error(`[moons] layout module \`${file}\` not loaded`);
     }
     node = wrapModule(file, layout, data, node);
   }
@@ -51,7 +51,7 @@ function wrapModule(
 ): ReactElement {
   const Component = module.default as ComponentType<{ children?: ReactNode }> | undefined;
   if (Component === undefined) {
-    throw new Error(`[moons] modul route \`${file}\` tidak punya export default`);
+    throw new Error(`[moons] route module \`${file}\` has no default export`);
   }
   return createElement(
     LoaderDataProvider,

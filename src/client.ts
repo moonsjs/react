@@ -25,11 +25,11 @@ const prefetchCache = new Map<string, { html: string; url: string; at: number }>
 export async function hydrate(): Promise<void> {
   const container = document.getElementById("root");
   if (container === null) {
-    throw new Error("[moons] elemen #root tidak ditemukan");
+    throw new Error("[moons] #root element not found");
   }
   const script = document.getElementById("__moons_data");
   if (script === null) {
-    throw new Error("[moons] script #__moons_data tidak ditemukan");
+    throw new Error("[moons] #__moons_data script not found");
   }
 
   // Addendum B.3: scroll restoration dikelola manual (konten di-swap async).
@@ -195,7 +195,9 @@ function loadOne(
 ): Promise<RouteModuleShape> {
   const load = loadRoute[file];
   if (load === undefined) {
-    return Promise.reject(new Error(`[moons] modul route \`${file}\` tidak ada di manifest client`));
+    return Promise.reject(
+      new Error(`[moons] route module \`${file}\` is missing from the client manifest`),
+    );
   }
   return load();
 }
