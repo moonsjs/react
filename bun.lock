@@ -5,7 +5,7 @@
     "": {
       "name": "@moonsjs/react",
       "dependencies": {
-        "@moonsjs/core": "^0.2.0",
+        "@moonsjs/core": "^0.3.0",
       },
       "devDependencies": {
         "@types/bun": "^1.4.3",
@@ -22,7 +22,7 @@
     },
   },
   "packages": {
-    "@moonsjs/core": ["@moonsjs/core@0.2.1", "", { "dependencies": { "devalue": "^6.0.3" } }, "sha512-bd3iwb9s8XgEVxWp/G0W5mL/KCJljrdjz50/ViZFEGYJYDJ4jB+T8w261jQvST9JshOnZqKPGQsvnWgzcr9Hdw=="],
+    "@moonsjs/core": ["@moonsjs/core@0.3.0", "", { "dependencies": { "devalue": "^6.0.3" } }, "sha512-X7RxbwMdlawEl+q8HfptsXS+hRzZbQeTuunsJ7C7xQpRHE827+9wcb17ZJ0S/eNgZ2iSFFmA4dELz7kvavR0/g=="],
 
     "@types/bun": ["@types/bun@1.4.3", "", { "dependencies": { "bun-types": "1.4.3" } }, "sha512-N67Pqy8JXbAY/j0tNraS3V5mubGvc6rrrNDmDCtZLlFzccbUJPDb0tvgUBC5q4m8ybkP93Jcn1QB+RYQ6PvBhw=="],
 
