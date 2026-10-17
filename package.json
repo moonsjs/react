@@ -1,6 +1,6 @@
 {
   "name": "@moonsjs/react",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
@@ -44,7 +44,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@moonsjs/core": "^0.1.0"
+    "@moonsjs/core": "^0.2.0"
   },
   "peerDependencies": {
     "react": "^19.3.0",

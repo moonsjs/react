@@ -3,6 +3,7 @@ import { decodeSsrPayload, reviveError, type SerializedError } from "@moonsjs/co
 import { hydrateRoot, type Root } from "react-dom/client";
 import { renderTree } from "./internal";
 import { registerNavigator, registerRefresh } from "./navigation";
+import { setTrailingSlashPolicy } from "./url-policy";
 import { registerPrefetcher, setNavigationPending } from "./navigation-store";
 import type { ClientRouteEntry, RouteModuleShape } from "./shapes";
 
@@ -12,8 +13,12 @@ type ScrollMode = "top" | "keep" | "restore";
 
 interface NavigateOptions {
   push: boolean;
+  replace?: boolean;
   scroll: ScrollMode;
 }
+
+/** URL of the document currently rendered (used to ignore hash-only popstate). */
+let lastRenderedUrl: string | null = null;
 
 /** Addendum D.4: prefetch dokumen (best effort) — TTL cache kecil. */
 const PREFETCH_TTL_MS = 10_000;
@@ -37,11 +42,21 @@ export async function hydrate(): Promise<void> {
     history.scrollRestoration = "manual";
   }
 
-  await hydratePayload(script.textContent ?? "", container);
+  // Addendum O: the server advertises the trailing-slash policy.
+  const policy = document
+    .querySelector('meta[name="moons:trailing-slash"]')
+    ?.getAttribute("content");
+  if (policy === "always" || policy === "never") {
+    setTrailingSlashPolicy(policy);
+  }
 
-  registerNavigator(async (href) => {
+  await hydratePayload(script.textContent ?? "", container);
+  lastRenderedUrl = window.location.href;
+
+  registerNavigator(async (href, options) => {
     saveCurrentScroll();
-    await documentNavigate(href, { push: true, scroll: "top" });
+    const replace = options?.replace === true;
+    await documentNavigate(href, { push: !replace, replace, scroll: "top" });
   });
   registerRefresh(async () => {
     invalidatePrefetch(window.location.href);
@@ -51,7 +66,24 @@ export async function hydrate(): Promise<void> {
     void prefetchDocument(href);
   });
   window.addEventListener("popstate", () => {
-    void documentNavigate(window.location.href, { push: false, scroll: "restore" });
+    const next = window.location.href;
+    // Addendum O: same-document hash changes must not swap the page (the
+    // browser already scrolled to the anchor); the router only restores
+    // scroll for real history entries.
+    if (lastRenderedUrl !== null) {
+      try {
+        const previous = new URL(lastRenderedUrl);
+        const current = new URL(next);
+        if (previous.pathname === current.pathname && previous.search === current.search) {
+          lastRenderedUrl = next;
+          return;
+        }
+      } catch {
+        // fall through to a normal navigation
+      }
+    }
+    lastRenderedUrl = next;
+    void documentNavigate(next, { push: false, scroll: "restore" });
   });
 }
 
@@ -233,16 +265,25 @@ async function documentNavigate(href: string, options: NavigateOptions): Promise
       return;
     }
 
+    // Addendum O: keep the requested fragment when the server response drops it.
+    const hashIndex = href.indexOf("#");
+    const requestedHash = hashIndex === -1 ? "" : href.slice(hashIndex);
+    const navigationUrl =
+      requestedHash.length > 0 && !finalUrl.includes("#") ? `${finalUrl}${requestedHash}` : finalUrl;
+
     if (options.push) {
       // Addendum B.2: redirect HTTP diikuti fetch — entri history memakai URL final.
-      history.pushState({ moonsScrollY: 0 }, "", finalUrl);
+      history.pushState({ moonsScrollY: 0 }, "", navigationUrl);
+    } else if (options.replace === true) {
+      history.replaceState({ moonsScrollY: 0 }, "", navigationUrl);
     }
 
     root?.unmount();
     root = null;
     container.innerHTML = newRoot.innerHTML;
     await hydratePayload(dataScript.textContent ?? "", container);
-    restoreScroll(options.scroll, finalUrl);
+    lastRenderedUrl = window.location.href;
+    restoreScroll(options.scroll, navigationUrl);
   } catch {
     window.location.assign(href);
   } finally {

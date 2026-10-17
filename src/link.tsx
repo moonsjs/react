@@ -1,5 +1,6 @@
 import type { JSX, MouseEvent, ReactNode } from "react";
 import { navigate } from "./navigation";
+import { normalizePath } from "./url-policy";
 import { prefetchRoute } from "./navigation-store";
 import type { RouteMap } from "./types";
 
@@ -106,8 +107,9 @@ export function buildHref(
           })
           .join("/")}`;
 
+  const normalized = normalizePath(path);
   if (search === undefined) {
-    return path;
+    return normalized;
   }
 
   const query = new URLSearchParams();
@@ -117,5 +119,5 @@ export function buildHref(
     }
   }
   const queryString = query.toString();
-  return queryString.length > 0 ? `${path}?${queryString}` : path;
+  return queryString.length > 0 ? `${normalized}?${queryString}` : normalized;
 }

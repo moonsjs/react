@@ -1,4 +1,11 @@
-type Navigator = (href: string) => Promise<void> | void;
+export interface NavigateOptions {
+  /** Replace the current history entry instead of pushing a new one. */
+  replace?: boolean;
+}
+
+import { normalizeHref } from "./url-policy";
+
+type Navigator = (href: string, options?: NavigateOptions) => Promise<void> | void;
 type Refresher = () => Promise<void> | void;
 
 let registered: Navigator | null = null;
@@ -15,16 +22,30 @@ export function registerRefresh(refresher: Refresher): void {
 }
 
 /**
- * Navigasi client-side (§8.3): tanpa reload bila runtime client aktif,
- * fallback ke navigasi browser biasa.
+ * Navigate to an internal URL without a full page reload when the client
+ * runtime is active (Addendum O). `href` is a URL path — for typed route
+ * patterns use `Link` instead.
  */
-export function navigate(href: string): void {
+export function navigate(href: string, options: NavigateOptions = {}): void {
+  if (href.startsWith("#")) {
+    if (typeof window !== "undefined") {
+      window.location.assign(href);
+    }
+    return;
+  }
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(href) || href.startsWith("//")) {
+    if (typeof window !== "undefined") {
+      window.location.assign(href);
+    }
+    return;
+  }
+  const normalized = normalizeHref(href);
   if (registered !== null) {
-    void registered(href);
+    void registered(normalized, options);
     return;
   }
   if (typeof window !== "undefined") {
-    window.location.assign(href);
+    window.location.assign(normalized);
   }
 }
 
